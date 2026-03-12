@@ -1,0 +1,263 @@
+Given what you described, the implementation can stay fairly small. The goal is simply:
+
+show today’s new problems
+
+show today’s reviews
+
+allow mark solved / not solved
+
+reschedule if unsolved
+
+Below is a practical step-by-step plan.
+
+1. Define the Core Behavior
+
+Your system will follow these rules:
+
+Inputs
+
+list of LeetCode problem IDs
+
+newPerDay
+
+reviewAfterDays
+
+Daily logic
+
+Assign newPerDay new problems.
+
+Show problems whose reviewDate == today.
+
+If a new problem is not solved, move it to tomorrow’s new list.
+
+If solved → schedule review.
+
+2. Data Model
+
+You only need two main objects.
+
+Problem List
+{
+  "problemId": 1,
+  "status": "pending"
+}
+Solved Records
+{
+  "problemId": 1,
+  "dateSolved": "2026-03-12",
+  "reviewDate": "2026-03-14"
+}
+Optional status field
+status:
+pending
+solved
+reviewed
+3. Project Structure
+
+Simple structure:
+
+leetcode-tracker
+│
+├── backend
+│   ├── server.js
+│   ├── routes
+│   │   └── planRoutes.js
+│   ├── controllers
+│   │   └── planController.js
+│   └── db
+│       └── sqlite.js
+│
+└── frontend
+    ├── src
+    │   ├── App.jsx
+    │   ├── pages
+    │   │   └── Dashboard.jsx
+    │   ├── components
+    │   │   ├── NewQuestions.jsx
+    │   │   └── ReviewQuestions.jsx
+    │   └── api.js
+4. Database Tables (SQLite)
+Problems table
+problems
+--------
+id
+problemId
+status
+dateAssigned
+dateSolved
+reviewDate
+Settings table
+settings
+--------
+newPerDay
+reviewAfterDays
+5. Backend Endpoints
+Get today's plan
+GET /today
+
+Returns:
+
+{
+  "newQuestions": [1,2],
+  "reviews": [5,6]
+}
+Mark problem solved
+POST /solve
+
+Body:
+
+{
+  "problemId": 1
+}
+
+Backend:
+
+dateSolved = today
+reviewDate = today + reviewAfterDays
+Mark problem unsolved
+POST /unsolved
+
+Logic:
+
+dateAssigned = tomorrow
+6. Core Logic
+Generate today's new questions
+
+Pseudo:
+
+1. get unsolved problems
+2. assign next N problems
+3. store dateAssigned = today
+Get reviews
+SELECT * 
+WHERE reviewDate = today
+7. Frontend Dashboard
+
+Simple layout:
+
+--------------------------------
+Today's Plan
+--------------------------------
+
+NEW QUESTIONS
+[ ] 1
+[ ] 2
+
+REVIEWS
+[ ] 5
+[ ] 6
+
+Checkbox behavior:
+
+checked → solved
+
+unchecked → stays pending
+
+Buttons:
+
+[Submit Progress]
+8. Checkbox Logic
+
+For new questions:
+
+checked → solved → schedule review
+unchecked → push to tomorrow
+
+For review questions:
+
+checked → mark reviewed
+unchecked → schedule tomorrow review
+9. Minimal React Components
+
+You only need three.
+
+Dashboard
+
+Handles data fetch.
+
+QuestionItem
+[ ] 2 Two Sum
+
+Props:
+
+problemId
+checked
+onToggle
+QuestionList
+
+Displays lists of problems.
+
+10. Implementation Order
+
+Follow this order to avoid complexity.
+
+Step 1
+
+Initialize project
+
+npm init
+npm install express sqlite3 cors
+Step 2
+
+Create SQLite tables.
+
+Step 3
+
+Implement /today endpoint.
+
+Step 4
+
+Implement /solve endpoint.
+
+Step 5
+
+Create React frontend.
+
+Step 6
+
+Render dashboard.
+
+Step 7
+
+Add checkboxes.
+
+Step 8
+
+Connect API.
+
+11. Final Behavior
+
+User workflow:
+
+Morning:
+
+Open dashboard
+
+See:
+
+NEW
+12
+45
+
+REVIEW
+7
+8
+
+After solving:
+
+☑ 12
+☑ 45
+
+Submit → reviews scheduled automatically.
+
+12. Time to Build
+
+Rough estimate:
+
+Backend: ~2 hours
+
+Frontend: ~2–3 hours
+
+Testing: ~1 hour
+
+Total: one evening project.
