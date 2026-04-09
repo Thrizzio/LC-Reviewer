@@ -1,34 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import { getTodayPlan, markSolved } from './api'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [plan, setPlan] = useState(null)
+  const [checked, setChecked] = useState({})
+
+  function toggleCheckbox(id){
+    setChecked(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
+
+  useEffect(() => {
+    async function fetchPlan(){
+      const data = await getTodayPlan()
+      setPlan(data)
+    }
+
+    fetchPlan()
+  }, [])
+
+  if(!plan){
+    return <p>Loading...</p>
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+
+      <h1>Today's Plan</h1>
+
+      <h2>New Questions</h2>
+      {plan.newQuestions.map(q => (
+        <div key={q.id} className={`problem-item ${checked[q.id] ? "completed" : ""}`}>
+
+          <input
+            type="checkbox"
+            checked={checked[q.id] || false}
+            onChange={() => {
+              toggleCheckbox(q.id)
+              markSolved(q.id)
+            }}
+          />
+
+          <a
+            href={`https://leetcode.com/problemset/all/?search=${q.problemId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Problem {q.problemId}
+          </a>
+
+        </div>
+      ))}
+
+      <h2>Review Questions</h2>
+      {plan.reviews.map(q => (
+        <div key={q.id} className={`problem-item-${checked[q.id] ? "completed" : ""}`}>
+
+          <input
+            type="checkbox"
+            checked={checked[q.id] || false}
+            onChange={() => toggleCheckbox(q.id)}
+          />
+
+          <a
+            href={`https://leetcode.com/problemset/all/?search=${q.problemId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Problem {q.problemId}
+          </a>
+
+        </div>
+      ))}
+
+    </div>
   )
 }
 

@@ -18,6 +18,19 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.problem-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+.problem-item-completed {
+  color: gray;
+  text-decoration: line-through;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
