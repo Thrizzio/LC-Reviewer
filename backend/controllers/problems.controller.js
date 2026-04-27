@@ -6,9 +6,9 @@ export async function getTodayPlan(req, res) {
   const today = new Date().toISOString().split("T")[0]
 
   const reviews = await db.all(
-    "SELECT * FROM problems WHERE reviewDate = ?",
-    today
-  )
+  "SELECT * FROM problems WHERE reviewDate <= ? AND status = 'solved'",
+  today
+)
 
   const newQuestions = await db.all(
     "SELECT * FROM problems WHERE status = 'pending' ORDER BY id LIMIT 2"
