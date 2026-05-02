@@ -24,60 +24,64 @@ function App() {
   }, [])
 
   if(!plan){
-    return <p>Loading...</p>
+    return <main className="app-container">Loading...</main>
   }
 
   return (
-    <div>
+    <main className="app-container">
 
       <h1>Today's Plan</h1>
 
-      <h2>New Questions</h2>
-      {plan.newQuestions.map(q => (
-        <div key={q.id} className={`problem-item ${checked[q.id] ? "completed" : ""}`}>
+      <section className="plan-section">
+        <h2>New Questions</h2>
+        {plan.newQuestions.map(q => (
+          <div key={q.id} className={`problem-item ${checked[q.id] ? "completed" : ""}`}>
 
-          <input
-            type="checkbox"
-            checked={checked[q.id] || false}
-            onChange={() => {
-              toggleCheckbox(q.id)
-              markSolved(q.id)
-            }}
-          />
+            <input
+              type="checkbox"
+              checked={checked[q.id] || false}
+              onChange={() => {
+                toggleCheckbox(q.id)
+                markSolved(q.id)
+              }}
+            />
 
-          <a
-            href={`https://leetcode.com/problemset/all/?search=${q.problemId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Problem {q.problemId}
-          </a>
+            <a
+              href={`https://leetcode.com/problemset/all/?search=${q.problemId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Problem {q.problemId}
+            </a>
 
-        </div>
-      ))}
+          </div>
+        ))}
+      </section>
 
-      <h2>Review Questions</h2>
-      {plan.reviews.map(q => (
-        <div key={q.id} className={`problem-item-${checked[q.id] ? "completed" : ""}`}>
+      <section className="plan-section">
+        <h2>Review Questions</h2>
+        {plan.reviews.map(q => (
+          <div key={q.id} className={`problem-item ${checked[q.id] ? "completed" : ""}`}>
 
-          <input
-            type="checkbox"
-            checked={checked[q.id] || false}
-            onChange={() => toggleCheckbox(q.id)}
-          />
+            <input
+              type="checkbox"
+              checked={checked[q.id] || false}
+              onChange={() => toggleCheckbox(q.id)}
+            />
 
-          <a
-            href={`https://leetcode.com/problemset/all/?search=${q.problemId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Problem {q.problemId}
-          </a>
+            <a
+              href={`https://leetcode.com/problemset/all/?search=${q.problemId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Problem {q.problemId}
+            </a>
 
-        </div>
-      ))}
+          </div>
+        ))}
+      </section>
 
-    </div>
+    </main>
   )
 }
 
